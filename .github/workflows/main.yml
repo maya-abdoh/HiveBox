@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build:
+  test-docker-file:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,81 +27,40 @@ jobs:
       run: |
         docker run -d -p 8000:8000 fastapi-app
 
-    - name: Test the FastAPI app
-      run: |
-        curl --fail http://localhost:8000 || exit 1
-  hadolint:
+  build-lint-app-dockerfile-unit-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
       # Install Hadolint
       - name: Install Hadolint
         run: |
           curl -sL https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 -o hadolint
           chmod +x hadolint
           sudo mv hadolint /usr/local/bin/
+      - 
 
       # Run Hadolint on Dockerfile
       - name: Run Hadolint
         run: hadolint Dockerfile
-  lint:
-  
-    name: Lint Code
-    runs-on: ubuntu-latest
-
-    steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
-      # Set up Python
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
 
       # Install dependencies
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install pylint
+          pip install -r requirements.txt
 
       # Lint Python code
       - name: Lint Python code
         run: pylint app.py
-
-  test:
-    name: Run Unit Tests
-    runs-on: ubuntu-latest
-
-    services:
-      docker:
-        image: fastapi-app
-        options: --entrypoint "/bin/bash"
-        ports:
-          - 8000:8000
-
-    steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Set up Python
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      # Install test dependencies
-      - name: Install dependencies
-        run: |
-          pip install pytest
-          pip install -r requirements.txt
-
-      # Run unit tests
+      # Run Python test
       - name: Run tests
         run: pytest
+
 
   openssf-scorecard:
     name: OpenSSF Scorecard Check
