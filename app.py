@@ -1,7 +1,7 @@
 """ hivebox server """
+from fastapi import FastAPI
 from datetime import datetime
 import requests
-from fastapi import FastAPI
 import configparser
 
 app = FastAPI()
