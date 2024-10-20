@@ -1,15 +1,16 @@
-# testing file
+"""
+This module contains tests for the FastAPI application.
+"""
 
-import pytest
-from fastapi.testclient import TestClient
-from app import app
-from unittest.mock import patch
+from unittest.mock import patch  # Standard library import
+from fastapi.testclient import TestClient  # Third-party imports
+from app import app  # First-party imports
 
 client = TestClient(app)
 
 def test_version():
     """
-    Test if the /version endpoint returns the correct version
+    Test if the /version endpoint returns the correct version.
     """
     response = client.get("/version")
     assert response.status_code == 200
@@ -18,7 +19,7 @@ def test_version():
 @patch('requests.get')
 def test_temperature(mock_get):
     """
-    Test the /temperature endpoint by mocking the requests.get call
+    Test the /temperature endpoint by mocking the requests.get call.
     """
     # Mock response data
     mock_response_data = [
