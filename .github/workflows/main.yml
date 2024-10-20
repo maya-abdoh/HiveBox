@@ -61,21 +61,19 @@ jobs:
         run: pytest
 
 
-  openssf-scorecard:
-    name: OpenSSF Scorecard Check
+  security_score:
     runs-on: ubuntu-latest
-
     steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # Run OpenSSF Scorecard
-      - name: Run OpenSSF Scorecard
-        uses: ossf/scorecard-action@v2.1.1
+    - name: Run Scorecard
+      uses: ossf/scorecard-action@v2
+      with:
+        results_file: results.sarif
+        results_format: sarif
 
-      # Fix Scorecard issues
-      - name: Fix security issues
-        run: |
-          # Add any commands needed to fix issues based on Scorecard output
-          echo "Fixing Scorecard issues"
+    - name: Upload Scorecard results
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: results.sarif
