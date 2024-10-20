@@ -43,7 +43,6 @@ jobs:
           curl -sL https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 -o hadolint
           chmod +x hadolint
           sudo mv hadolint /usr/local/bin/
-      - 
 
       # Run Hadolint on Dockerfile
       - name: Run Hadolint
