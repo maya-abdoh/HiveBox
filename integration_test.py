@@ -21,7 +21,7 @@ def test_temperature(monkeypatch):
     Test the /temperature endpoint to ensure it returns a valid float
     by mocking the OpenSenseMap API response.
     """
-    
+
     # Mock response for the OpenSenseMap API
     mock_response = [
         {
@@ -38,12 +38,11 @@ def test_temperature(monkeypatch):
     ]
 
     # Mock requests.get to return a mocked response
-    def mock_get(*args, **kwargs):
-        class MockResponse:
-            def json(self):
-                return mock_response
-
-        return MockResponse()
+    def mock_get():
+        """
+        Mocks the requests.get function to return a predefined JSON response.
+        """
+        return type("MockResponse", (object,), {"json": lambda: mock_response})
 
     # Use monkeypatch to substitute the real requests.get with our mock
     monkeypatch.setattr("requests.get", mock_get)
