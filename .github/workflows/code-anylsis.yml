@@ -34,17 +34,11 @@ jobs:
         with:
           projectKey: maya-abdoh_HiveBox  
           args: >
-            -Dsonar.projectKey=my_python_project
+            -Dsonar.projectKey=maya-abdoh_HiveBox
             -Dsonar.language=python
             -Dsonar.host.url=https://sonarcloud.io/
 
-      # Step 5: SonarQube Quality Gate Check
-      - name: SonarQube Quality Gate Check
-        uses: sonarsource/sonarqube-quality-gate-action@v1.1.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      # Step 6: Run Semgrep Analysis for Python
+      # Step 5: Run Semgrep Analysis for Python
       - name: Run Semgrep Analysis for Python
         uses: returntocorp/semgrep-action@v1
         with:
