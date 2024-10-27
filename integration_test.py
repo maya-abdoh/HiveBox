@@ -58,3 +58,4 @@ def test_metrics_integration():
     """
     response = client.get("/metrics")
     assert response.status_code == 200
+    
