@@ -16,12 +16,12 @@ def test_version():
     assert response.status_code == 200
     assert response.json() == "v0.0.1"
 
-@patch('requests.get')
-def test_temperature(mock_get):
+@patch('app.requests.get')
+def test_temperature_status_good(mock_get):
     """
-    Test the /temperature endpoint by mocking the requests.get call.
+    Test the /temperature endpoint with a 'Good' status by mocking the requests.get call.
     """
-    # Mock response data
+    # Mock response data for "Good" temperature range
     mock_response_data = [
         {
             'sensors': [
@@ -40,4 +40,7 @@ def test_temperature(mock_get):
 
     response = client.get("/temperature")
     assert response.status_code == 200
-    assert response.json() == (22.5+24.0+21.5)/3  # Average of 22.5, 24.0, and 21.5
+    data = response.json()
+    expected_average = (22.5 + 24.0 + 21.5) / 3
+    assert data["average_temperature"] == expected_average
+    assert data["status"] == "Good"

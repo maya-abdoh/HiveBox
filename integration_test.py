@@ -1,4 +1,7 @@
-"integration test"
+"""
+Integration tests for the FastAPI application.
+"""
+
 import dataclasses
 from fastapi.testclient import TestClient
 from app import app
@@ -8,7 +11,7 @@ client = TestClient(app)
 @dataclasses.dataclass
 class MockResponse:
     """
-    Mock response to mimic the behavior of requests.get().json() 
+    Mock response to mimic the behavior of requests.get().json()
     when called to retrieve data.
     """
     def json(self):
@@ -35,20 +38,23 @@ def test_version():
     assert response.status_code == 200
     assert isinstance(response.json(), str)
 
-def test_temperature(monkeypatch):
+def test_temperature_integration(monkeypatch):
     """
-    Test the /temperature endpoint to ensure it returns a valid float
-    by mocking the OpenSenseMap API response.
+    Test the /temperature endpoint to ensure it returns a valid response
+    with average temperature and status by mocking the OpenSenseMap API response.
     """
     def mock_get(*_args, **_kwargs):
-        "get mock response"
         return MockResponse()
-
     monkeypatch.setattr("requests.get", mock_get)
-
     response = client.get("/temperature")
     assert response.status_code == 200
-    assert isinstance(response.json(), float)
-
+    data = response.json()
     expected_average = (22.5 + 23.0 + 24.5) / 3
-    assert response.json() == expected_average
+    assert data["average_temperature"] == expected_average
+    assert data["status"] == "Good"
+def test_metrics_integration():
+    """
+    Test the /metrics endpoint to ensure Prometheus metrics are accessible.
+    """
+    response = client.get("/metrics")
+    assert response.status_code == 200
