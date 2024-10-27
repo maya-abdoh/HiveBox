@@ -27,5 +27,4 @@ USER appuser
 # Expose the port FastAPI will run on
 EXPOSE 8000
 
-# Command to run FastAPI with uvicorn, binding to 0.0.0.0 and port 8000
-CMD ["fastapi", "run", "app.py","--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
