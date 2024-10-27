@@ -26,17 +26,33 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Step 4: Run SonarQube Analysis
+      # Step 4: Download and run SonarQube CLI for Analysis
       - name: SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io    # Replace with your SonarQube URL if using a self-hosted instance
+        run: |
+          # Download and unzip SonarQube CLI
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+          unzip sonar-scanner-cli-4.6.2.2472-linux.zip
+          export PATH=$PATH:$PWD/sonar-scanner-4.6.2.2472-linux/bin
+          
+          # Run SonarQube scan
+          sonar-scanner \
+            -Dsonar.projectKey=my_python_project  # Replace with your project key
+            -Dsonar.sources=. \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_TOKEN \
+            -Dsonar.language=python
+
+      # Step 5: SonarQube Quality Gate Check
+      - name: SonarQube Quality Gate Check
         uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args:
-            -Dsonar.language=python
-            -Dsonar.host.url=https://sonarcloud.io/
+          SONAR_HOST_URL: https://sonarcloud.io  # Replace if needed
 
-      # Step 5: Run Semgrep Analysis for Python
+      # Step 6: Run Semgrep Analysis for Python
       - name: Run Semgrep Analysis for Python
         uses: returntocorp/semgrep-action@v1
         with:
