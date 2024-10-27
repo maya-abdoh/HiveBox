@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: hivebox
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MINIO_ENDPOINT=minio
+      - MINIO_ACCESS_KEY=your_access_key
+      - MINIO_SECRET_KEY=your_secret_key
+      - MINIO_BUCKET=your_bucket_name
+      - APP_VERSION=1.0.0
+    depends_on:
+      - redis
+      - minio
+    ports:
+      - "8000:8000"
+
+  redis:
+    image: "redis:latest"
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  minio:
+    image: "minio/minio"
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: your_access_key
+      MINIO_ROOT_PASSWORD: your_secret_key
+    command: server /data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+volumes:
+  minio_data:

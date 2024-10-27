@@ -4,3 +4,5 @@ pytest
 pylint[spelling]
 uvicorn
 prometheus_client
+aioredis 
+minio
