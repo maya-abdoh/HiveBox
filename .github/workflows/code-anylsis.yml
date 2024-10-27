@@ -34,7 +34,6 @@ jobs:
         with:
           projectKey: maya-abdoh_HiveBox  
           args: >
-            -Dsonar.projectKey=maya-abdoh_HiveBox
             -Dsonar.language=python
             -Dsonar.host.url=https://sonarcloud.io/
 
