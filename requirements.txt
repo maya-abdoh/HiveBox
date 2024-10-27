@@ -2,3 +2,5 @@ fastapi[standard]
 requests
 pytest
 pylint[spelling]
+uvicorn
+prometheus_client
