@@ -1,0 +1,51 @@
+name: Static Code Analysis
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  analysis:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      # Step 3: Install dependencies
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 4: Run SonarQube Analysis
+      - name: SonarQube Analysis
+        uses: sonarsource/sonarqube-scan-action@v1.0.1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectKey: maya-abdoh_HiveBox  
+          args: >
+            -Dsonar.projectKey=my_python_project
+            -Dsonar.language=python
+            -Dsonar.host.url=https://sonarcloud.io/
+
+      # Step 5: SonarQube Quality Gate Check
+      - name: SonarQube Quality Gate Check
+        uses: sonarsource/sonarqube-quality-gate-action@v1.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # Step 6: Run Semgrep Analysis for Python
+      - name: Run Semgrep Analysis for Python
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: "python"
