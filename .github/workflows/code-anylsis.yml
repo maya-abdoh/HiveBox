@@ -38,6 +38,7 @@ jobs:
           args: >
             -Dsonar.projectKey=maya-abdoh_HiveBox
             -Dsonar.organization=maya-abdoh
+
             
       # Step 5: SonarQube Quality Gate Check
       - name: SonarQube Quality Gate Check
