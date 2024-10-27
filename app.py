@@ -1,7 +1,8 @@
 """ hivebox server """
 from datetime import datetime
 import configparser
-from fastapi import FastAPI
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from fastapi import FastAPI,Response
 import requests
 
 app = FastAPI()
@@ -42,3 +43,8 @@ def temperature() -> float:
         return 0
 
     return sum(temperatures) / len(temperatures)
+
+@app.get("/metrics")
+async def get_metrics():
+    "Get default Prometheus metrics for the application"
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
