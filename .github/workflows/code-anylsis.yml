@@ -34,7 +34,11 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
-
+        with:
+          args: >
+            -Dsonar.projectKey=maya-abdoh_HiveBox
+            -Dsonar.organization=maya-abdoh
+            
       # Step 5: SonarQube Quality Gate Check
       - name: SonarQube Quality Gate Check
         id: sonarqube-quality-gate-check
