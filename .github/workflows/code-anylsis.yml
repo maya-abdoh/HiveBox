@@ -12,55 +12,38 @@ jobs:
     steps:
       # Step 1: Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v2
-
-      # Step 2: Set up Java 17 (required by SonarQube)
-      - name: Set up Java
-        uses: actions/setup-java@v2
+        uses: actions/checkout@v3
         with:
-          java-version: '17'
-          distribution: 'temurin'   
+          fetch-depth: 0
 
-
-      # Step 3: Set up Python environment
+      # Step 2: Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
 
-      # Step 4: Install dependencies
+      # Step 3: Install dependencies
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Step 5: Download and run SonarQube CLI for Analysis
-      - name: SonarQube Analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io  
-        run: |
-          # Download and unzip SonarQube CLI
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-          unzip sonar-scanner-cli-4.6.2.2472-linux.zip
-          export PATH=$PATH:$PWD/sonar-scanner-4.6.2.2472-linux/bin
-          
-          # Run SonarQube scan
-          sonar-scanner \
-            -Dsonar.projectKey=maya-abdoh_HiveBox
-            -Dsonar.sources=. \
-            -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_TOKEN \
-            -Dsonar.language=python
-
-      # Step 6: SonarQube Quality Gate Check
-      - name: SonarQube Quality Gate Check
-        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
+      # Step 4: Run SonarQube Scan
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
 
-      # Step 7: Run Semgrep Analysis for Python
+      # Step 5: SonarQube Quality Gate Check
+      - name: SonarQube Quality Gate Check
+        id: sonarqube-quality-gate-check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # Step 6: Run Semgrep Analysis for Python
       - name: Run Semgrep Analysis for Python
         uses: returntocorp/semgrep-action@v1
         with:
