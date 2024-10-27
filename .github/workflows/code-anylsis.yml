@@ -19,6 +19,8 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'
+          distribution: 'temurin'   
+
 
       # Step 3: Set up Python environment
       - name: Set up Python
