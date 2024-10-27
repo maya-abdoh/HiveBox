@@ -20,18 +20,20 @@ def version() -> str:
     return VERSION
 
 @app.get("/temperature")
-def temperature() -> float:
+def temperature():
     """
-    Returns the average temperature in celcius
-    across all opensensemap boxes
+    Returns the average temperature in Celsius across all OpenSenseMap boxes
+    along with a status based on the temperature value.
     """
     phenomenon = "temperature"
     date = datetime.now().isoformat() + 'Z'
     res = requests.get(
-            f"https://api.opensensemap.org/boxes?date={date}&phenomenon={phenomenon}",
-            timeout=1000
+        f"https://api.opensensemap.org/boxes?date={date}&phenomenon={phenomenon}",
+        timeout=1000
     )
     all_boxes = res.json()
+
+    # Extract temperature values
     temperatures = [
         float(sensor['lastMeasurement']['value'])
         for box in all_boxes
@@ -40,9 +42,20 @@ def temperature() -> float:
     ]
 
     if not temperatures:
-        return 0
+        return {"average_temperature": None, "status": "No data available"}
 
-    return sum(temperatures) / len(temperatures)
+    # Calculate the average temperature
+    avg_temp = sum(temperatures) / len(temperatures)
+
+    # Determine the status based on the temperature average
+    if avg_temp < 10:
+        status = "Too Cold"
+    elif 11 <= avg_temp <= 36:
+        status = "Good"
+    else:
+        status = "Too Hot"
+
+    return {"average_temperature": avg_temp, "status": status}
 
 @app.get("/metrics")
 async def get_metrics():
